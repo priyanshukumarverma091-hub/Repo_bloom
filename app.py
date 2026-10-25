@@ -1,4 +1,7 @@
 import json
+import io
+import cloudinary
+import cloudinary.uploader
 import logging
 import os
 import re
@@ -245,6 +248,120 @@ def parse_repo(value):
         raise ValueError("The repository name is invalid.")
 
     return owner, repo
+
+# ============================================================
+# CLOUDINARY PROJECT ASSET UPLOAD
+# ============================================================
+
+@app.post("/api/assets/upload")
+def upload_project_asset():
+    """Upload a project image to Cloudinary."""
+
+    if not CLOUDINARY_CONFIGURED:
+        return error_response(
+            "Cloudinary is not configured. Check your .env file.",
+            503,
+        )
+
+    if "file" not in request.files:
+        return error_response(
+            "No file provided. Select an image to upload."
+        )
+
+    uploaded_file = request.files["file"]
+
+    if not uploaded_file.filename:
+        return error_response("Please select an image.")
+
+    project_id = (
+        request.form.get("project_id") or ""
+    ).strip()
+
+    title = (
+        request.form.get("title") or ""
+    ).strip()
+
+    description = (
+        request.form.get("description") or ""
+    ).strip()
+
+    if not project_id or len(project_id) > 100:
+        return error_response(
+            "A valid project_id is required."
+        )
+
+    if len(title) > 200:
+        return error_response(
+            "Title must not exceed 200 characters."
+        )
+
+    if len(description) > 1000:
+        return error_response(
+            "Description must not exceed 1000 characters."
+        )
+
+    extension = Path(
+        uploaded_file.filename
+    ).suffix.lower()
+
+    if extension not in ALLOWED_ASSET_EXTENSIONS:
+        return error_response(
+            "Only PNG, JPG, JPEG and WEBP images are supported."
+        )
+
+    # Read no more than the allowed size plus one byte.
+    file_data = uploaded_file.stream.read(
+        MAX_ASSET_SIZE + 1
+    )
+
+    if not file_data:
+        return error_response("The uploaded image is empty.")
+
+    if len(file_data) > MAX_ASSET_SIZE:
+        return error_response(
+            "Maximum image size is 5 MB.",
+            413,
+        )
+
+    try:
+        result = cloudinary.uploader.upload(
+            io.BytesIO(file_data),
+            resource_type="image",
+            folder="repobloom/project-assets",
+            tags=["repobloom"],
+        )
+
+        asset = {
+            "project_id": project_id,
+            "title": title or uploaded_file.filename,
+            "description": description,
+            "asset_type": "image",
+            "url": result.get("secure_url"),
+            "public_id": result.get("public_id"),
+            "format": result.get("format"),
+            "width": result.get("width"),
+            "height": result.get("height"),
+            "bytes": result.get("bytes"),
+        }
+
+        app.logger.info(
+            "Project asset uploaded: project_id=%s",
+            project_id,
+        )
+
+        return jsonify({
+            "ok": True,
+            "message": "Image uploaded successfully.",
+            "asset": asset,
+        }), 201
+
+    except Exception:
+        app.logger.exception(
+            "Cloudinary image upload failed."
+        )
+
+        return error_response(
+            "Image upload failed. Check Cloudinary configuration.",
 
 
 # ============================================================
