@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#f5f8ff">
+    <title>RepoBloom — Repository Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink: #15233b;
+            --muted: #64748b;
+            --line: #e3eaf3;
+            --bg: #f5f8ff;
+            --blue: #4263eb;
+            --green: #087f5b;
+            --red: #b42332;
+            --shadow: 0 12px 35px #243c6410
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: radial-gradient(ellipse at 12% 0%, #e2f2ff, transparent 32%), radial-gradient(ellipse at 100% 10%, #f1e8ff, transparent 27%), var(--bg);
+            font-family: 'DM Sans', sans-serif
+        }
+
+        button,
+        input {
+            font: inherit
+        }
+
+        button {
+            cursor: pointer
+        }
+
+        .shell {
+            max-width: 1400px;
+            margin: auto;
+            padding: 24px
+        }
+
+        .top,
+        .brand,
+        .panel-head,
+        .section-title,
+        .metric-top,
+        .chat-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px
+        }
+
+        .top {
+            margin-bottom: 24px
+        }
+
+        .brand {
+            justify-content: flex-start;
+            font: 700 23px 'Space Grotesk';
+            letter-spacing: -.8px
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: linear-gradient(140deg, #4263eb, #12b8a6);
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 23px
+        }
+
+        .pill,
+        .tag {
+            font-size: 11px;
+            font-weight: 800;
+            color: #246b61;
+            background: #dffaf3;
+            padding: 8px 11px;
+            border-radius: 99px
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 20px
+        }
+
+        .hero-copy,
+        .search-card,
+        .panel,
+        .metric {
+            background: #ffffffed;
+            border: 1px solid #e4eaf4;
+            border-radius: 21px;
+            box-shadow: var(--shadow)
+        }
+
+        .hero-copy {
+            padding: 30px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: var(--blue);
+            text-transform: uppercase
+        }
+
+        .hero h1 {
+            font: 700 clamp(32px, 4vw, 50px)/1.08 'Space Grotesk';
+            letter-spacing: -2px;
+            margin: 15px 0;
+            position: relative;
+            z-index: 1
+        }
+
+        .hero h1 span {
+            color: var(--blue)
+        }
+
+        .hero p {
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 620px;
+            position: relative;
+            z-index: 1
+        }
+
+        .orb {
+            position: absolute;
+            right: -30px;
+            bottom: -85px;
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #b6f5e9, #c9d7ff 55%, #f0dfff);
+            opacity: .65
+        }
+
+        .search-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+            min-width: 0
+        }
+
+        .search-card h2,
+        .panel h2 {
+            font: 700 20px 'Space Grotesk';
+            margin: 0
+        }
+
+        .search-card label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #53627a
+        }
+
+        .inputrow,
+        .dev-work {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e7edf6
+        }
+
+        .role-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 7px
+        }
+
+        .role-badge {
+            font-size: 10px;
+            font-weight: 800;
+            color: #3650b8;
+            background: #edf2ff;
+            border-radius: 7px;
+            padding: 5px 7px
+        }
+
+        .evidence {
+            font-size: 11px;
+            color: #526176;
+            line-height: 1.65;
+            margin-top: 7px;
+            overflow-wrap: anywhere
+        }
+
+        .work-commits {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px
+        }
+
+        .work-commit {
+            font-size: 11px;
+            line-height: 1.5;
+            background: #f7f9ff;
+            border: 1px solid #e8edf7;
+            border-radius: 8px;
+            padding: 8px;
+            overflow-wrap: anywhere
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 9px
+        }
+
+        .inputrow input,
+        .chat-form input {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid #dbe3f0;
+            border-radius: 12px;
+            padding: 13px;
+            background: white;
+            color: var(--ink)
+        }
+
+        input:focus {
+            outline: 3px solid #4263eb22;
+            border-color: #4263eb
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4263eb, #6848e8);
+            color: #fff;
+            padding: 13px 16px;
+            font-weight: 800;
+            box-shadow: 0 7px 16px #4263eb30
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: wait
+        }
+
+        .btn.secondary {
+            background: #edf2ff;
+            color: #3450c5;
+            box-shadow: none
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #8793a7;
+            line-height: 1.5
+        }
+
+        .status {
+            font-size: 12px;
+            color: var(--muted);
+            min-height: 38px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            line-height: 1.5;
+            background: #f1f5ff;
+            overflow-wrap: anywhere
+        }
+
+        .status.loading {
+            background: #eef5ff;
+            color: #3158b7
+        }
+
+        .status.success {
+            background: #e8fbf3;
+            color: var(--green)
+        }
+
+        .status.error {
+            background: #fff0f0;
+            color: var(--red)
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 20px 0
+        }
+
+        .metric {
+            padding: 18px
+        }
+
+        .metric-top {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted)
+        }
+
+        .metric-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: #edf2ff;
+            color: var(--blue);
+            display: grid;
+            place-items: center
+        }
+
+        .metric-value {
+            font: 700 28px 'Space Grotesk';
+            margin: 12px 0 4px
+        }
+
+        .metric-note {
+            font-size: 11px;
+            color: #8a96a9
+        }
+
+        .section-title {
+            align-items: end;
+            margin: 27px 2px 13px
+        }
+
+        .section-title h2 {
+            font: 700 22px 'Space Grotesk';
+            margin: 0
+        }
+
+        .section-title p,
+        .panel-head p {
+            font-size: 12px;
+            color: var(--muted);
+            margin: 5px 0 0
+        }
+
+        .tag {
+            border-radius: 8px;
+            background: #eef2f8;
+            color: #576783;
+            white-space: nowrap
+        }
+
+        .grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 17px
+        }
+
+        .panel {
+            padding: 21px;
+            min-width: 0
+        }
+
+        .panel-head {
+            margin-bottom: 16px
+        }
+
+        .empty {
+            padding: 22px 13px;
+            text-align: center;
+            color: #8592a6;
+            font-size: 13px;
+            background: #f8faff;
+            border: 1px dashed #dce5f1;
+            border-radius: 13px;
+            line-height: 1.6
+        }
+
+        .overview-text {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere
+        }
+
+        .contributors,
+        .commit-list,
+        .role-list,
+        .issues,
+        .map {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .person {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            padding: 12px;
+            border: 1px solid #e9eef6;
+            border-radius: 13px;
+            background: #fbfcff
+        }
+
+        .avatar {
+            flex: 0 0 37px;
+            height: 37px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #dbeafe, #ede9fe);
+            color: #3f4fba;
+            font-weight: 800
+        }
+
+        .person-main {
+            flex: 1;
+            min-width: 0
+        }
+
+        .person-name,
+        .commit-title {
+            font-weight: 800;
+            font-size: 13px;
+            overflow-wrap: anywhere
+        }
+
+        .person-meta,
+        .commit-meta {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 5px;
+            line-height: 1.6;
+            overflow-wrap: anywhere
+        }
+
+        .person-stats,
+        .sha {
+            font-size: 10px;
+            font-weight: 800;
+            color: #3450c5;
+            background: #edf2ff;
+            padding: 6px 8px;
+            border-radius: 8px;
+            white-space: nowrap
+        }
+
+        .commit {
+            padding: 14px;
+            border: 1px solid #e7edf6;
+            border-radius: 13px
+        }
+
+        .commit-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start
+        }
+
+        .commit-summary {
+            font-size: 12px;
+            color: #526176;
+            line-height: 1.7;
+            margin-top: 9px;
+            overflow-wrap: anywhere
+        }
+
+        .filechips,
+        .role-files {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 9px
+        }
+
+        .chip {
+            font: 11px monospace;
+            padding: 5px 7px;
+            border-radius: 7px;
+            background: #f1f5f9;
+            color: #526176;
+            overflow-wrap: anywhere
+        }
+
+        .commit-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px
+        }
+
+        .linkbtn {
+            background: none;
+            border: 0;
+            color: #4263eb;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px
+        }
+
+        .issue,
+        .role {
+            padding: 12px;
+            border-radius: 12px;
+            background: #fbfcff;
+            border: 1px solid #e7edf6;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-wrap: anywhere
+        }
+
+        .issue strong {
+            display: block;
+            margin-bottom: 4px
+        }
+
+        .role-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 800
+        }
+
+        .role-desc {
+            font-size: 12px;
+            color: #65738a;
+            line-height: 1.65;
+            margin-top: 7px
+        }
+
+        .dev-summary {
+            font-size: 12px;
+            line-height: 1.75;
+            color: #46556b;
+            background: #f5f8fc;
+            border: 1px solid #e4eaf4;
+            border-radius: 10px;
+            padding: 11px;
+            margin-top: 10px;
+            white-space: pre-wrap
+        }
+
+        .dev-section {
+            margin-top: 13px;
+            padding-top: 11px;
+            border-top: 1px solid #e7edf6
+        }
+
+        .dev-section-title {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .35px;
+            text-transform: uppercase;
+            color: #53627a;
+            margin-bottom: 7px
+        }
+
+        .dev-row {
+            font-size: 12px;
+            line-height: 1.65;
+            padding: 8px 0;
+            border-bottom: 1px solid #edf1f7;
+            overflow-wrap: anywhere
+        }
+
+        .dev-row:last-child {
+            border-bottom: 0
+        }
+
+        .dev-row strong {
+            display: block;
+            color: #26344a;
+            margin-bottom: 3px
+        }
+
+        .dev-meta {
+            font-size: 11px;
+            color: #6c7b91;
+            line-height: 1.6
+        }
+
+        .dev-link {
+            color: #3657c8;
+            text-decoration: none;
+            font-weight: 700
+        }
+
+        .dev-link:hover {
+            text-decoration: underline
+        }
+
+        .issue-flag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border-radius: 6px;
+            padding: 3px 6px;
+            background: #fff0d9;
+            color: #8a4c00;
+            margin: 0 5px 4px 0
+        }
+
+        .issue-flag.high {
+            background: #ffe5e5;
+            color: #a51e2d
+        }
+
+        .issue-flag.low {
+            background: #e8f7ed;
+            color: #267245
+        }
+
+        .map-item {
+            display: flex;
+            gap: 10px
+        }
+
+        .map-dot {
+            width: 11px;
+            height: 11px;
+            flex: 0 0 11px;
+            border-radius: 50%;
+            background: #12b8a6;
+            margin-top: 4px;
+            box-shadow: 0 0 0 4px #dffaf3
+        }
+
+        .map-content {
+            flex: 1;
+            border-left: 1px solid #dce7f3;
+            margin-left: -16px;
+            padding: 0 0 14px 20px;
+            overflow-wrap: anywhere
+        }
+
+        .map-title {
+            font-size: 12px;
+            font-weight: 800
+        }
+
+        .map-desc {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-top: 4px
+        }
+
+        .chat-panel {
+            padding: 0;
+            overflow: hidden
+        }
+
+        .chat-head {
+            padding: 18px 21px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .chat-head h2 {
+            margin: 0
+        }
+
+        .chat-state {
+            font-size: 11px;
+            color: var(--green);
+            font-weight: 800
+        }
+
+        .chat-messages {
+            height: 310px;
+            overflow: auto;
+            padding: 17px;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            background: #f9fbff
+        }
+
+        .message {
+            max-width: 88%;
+            padding: 11px 13px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background: white;
+            border: 1px solid #e4eaf4
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: #4263eb;
+            color: white
+        }
+
+        .message.error {
+            background: #fff4f4;
+            color: #a31d2b;
+            border-color: #ffd1d1
+        }
+
+        .chat-form {
+            padding: 14px;
+            border-top: 1px solid var(--line)
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            color: #91a0b3;
+            font-size: 11px;
+            padding: 24px 4px 5px
+        }
+
+        @media(max-width:850px) {
+
+            .hero,
+            .grid2 {
+                grid-template-columns: 1fr
+            }
+
+            .metrics {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+        }
+
+        @media(max-width:540px) {
+            .shell {
+                padding: 13px
+            }
+
+            .brand {
+                font-size: 20px
+            }
+
+            .hero-copy,
+            .search-card,
+            .panel {
+                padding: 17px
+            }
+
+            .inputrow {
+                flex-direction: column
+            }
+
+            .metrics {
+                gap: 8px
+            }
+
+            .metric {
+                padding: 13px
+            }
+
+            .metric-value {
+                font-size: 23px
+            }
+
+            .section-title h2 {
+                font-size: 19px
+            }
+
+            .person {
+                flex-wrap: wrap
+            }
+
+            .chat-form {
+                padding: 10px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <header class="top">
+            <div class="brand">
+                <div class="logo">✿</div><span>RepoBloom</span>
+            </div>
+            <div class="pill">● Evidence-first repository intelligence</div>
+        </header>
+        <main>
+            <section class="hero">
+                <div class="hero-copy">
+                    <div class="eyebrow">Understand the work behind the code</div>
+                    <h1>Every commit<br>has a <span>story.</span></h1>
+                    <p>Turn a Git repository into a clear handoff. Explore who contributed, what changed, what was
+                        tried, and where the next developer should start.</p>
+                    <div class="orb"></div>
+                </div>
+                <div class="search-card">
+                    <div class="eyebrow">Start with a repository</div>
+                    <h2>What are we exploring?</h2><label for="repoInput">PUBLIC GITHUB REPOSITORY URL</label>
+                    <div class="inputrow"><input id="repoInput" type="text"
+                            placeholder="https://github.com/owner/repository" autocomplete="url"><button id="analyzeBtn"
+                            class="btn" type="button">Analyze repo ↗</button></div>
+                    <div class="hint">Paste a public GitHub URL or owner/repo. Keep API keys in your server-side .env
+                        file, never in this HTML.</div>
+                    <div id="status" class="status" role="status" aria-live="polite">Ready when you are. Enter a
+                        repository to begin.</div>
+                </div>
+            </section>
+            <section class="metrics">
+                <div class="metric">
+                    <div class="metric-top">Contributors <span class="metric-icon">♙</span></div>
+                    <div id="metricContributors" class="metric-value">—</div>
+                    <div class="metric-note">People represented in analysis</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-top">Commits inspected <span class="metric-icon">⌘</span></div>
+                    <div id="metricCommits" class="metric-value">—</div>
+                    <div class="metric-note">Recent repository history</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-top">Files touched <span class="metric-icon">▤</span></div>
+                    <div id="metricFiles" class="metric-value">—</div>
+                    <div class="metric-note">Unique files in inspected commits</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-top">Lines changed <span class="metric-icon">↕</span></div>
+                    <div id="metricChanges" class="metric-value">—</div>
+                    <div class="metric-note">Additions + deletions, if available</div>
+                </div>
+            </section>
+            <div class="section-title">
+                <div>
+                    <h2>Repository briefing</h2>
+                    <p>A quick orientation for the person picking up this project.</p>
+                </div><span class="tag" id="repoLabel">NO REPOSITORY LOADED</span>
+            </div>
+            <section class="grid2">
+                <article class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>AI project overview</h2>
+                            <p>Purpose, implementation clues, and handoff guidance</p>
+                        </div><span class="tag">SUMMARY</span>
+                    </div>
+                    <div id="overview" class="overview-text">
+                        <div class="empty">Your repository overview will appear here after analysis.</div>
+                    </div>
+                </article>
+                <article class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Who worked on what?</h2>
+                            <p>Contributor activity from available commit history</p>
+                        </div><span class="tag">PEOPLE</span>
+                    </div>
+                    <div id="contributors" class="contributors">
+                        <div class="empty">Contributor details will appear here.</div>
+                    </div>
+                </article>
+            </section>
+            <div class="section-title">
+                <div>
+                    <h2>Commit intelligence</h2>
+                    <p>Understand the change, not just the commit message.</p>
+                </div><span class="tag">GIT HISTORY</span>
+            </div>
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Recent commits</h2>
+                        <p id="commitSubtitle">Commit summaries appear here when available.</p>
+                    </div><button class="btn secondary" id="clearBtn" type="button">Clear view</button>
+                </div>
+                <div id="commits" class="commit-list">
+                    <div class="empty">Analyze a repository to inspect its commits.</div>
+                </div>
+            </section>
+            <div class="section-title">
+                <div>
+                    <h2>Project structure & handoff</h2>
+                    <p>Evidence-backed hints about responsibilities and possible next steps.</p>
+                </div>
+            </div>
+            <section class="grid2">
+                <article class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Role & responsibility map</h2>
+                            <p>Likely ownership based on files and activity</p>
+                        </div><span class="tag">ROLE MAP</span>
+                    </div>
+                    <div id="roleMap" class="role-list">
+                        <div class="empty">Role mapping will appear here if returned by the API.</div>
+                    </div>
+                </article>
+                <article class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h2>Repository connection map</h2>
+                            <p>Components, files, and relationships surfaced by analysis</p>
+                        </div><span class="tag">CONNECTIONS</span>
+                    </div>
+                    <div id="connectionMap" class="map">
+                        <div class="empty">Connections will appear here if available.</div>
+                    </div>
+                </article>
+            </section>
+            <div class="section-title">
+                <div>
+                    <h2>Issues & next steps</h2>
+                    <p>Follow-ups surfaced by repository analysis.</p>
+                </div><span class="tag">HANDOFF</span>
+            </div>
+            <section class="panel">
+                <div id="issues" class="issues">
+                    <div class="empty">Potential next steps will appear here after analysis.</div>
+                </div>
+            </section>
+            <div class="section-title">
+                <div>
+                    <h2>Ask RepoBloom</h2>
+                    <p>Ask about a commit, contributor work, architecture, or where to continue.</p>
+                </div>
+            </div>
+            <section class="panel chat-panel">
+                <div class="chat-head">
+                    <div>
+                        <h2>Repository assistant</h2>
+                        <p class="hint">Answers depend on the repository context available to your backend.</p>
+                    </div><span id="chatState" class="chat-state">● Ready</span>
+                </div>
+                <div id="chatMessages" class="chat-messages" aria-live="polite">
+                    <div class="message bot">Hi! Analyze a repository first, then ask what a contributor worked on, what
+                        a commit changed, or what the next developer should investigate.</div>
+                </div>
+                <form id="chatForm" class="chat-form"><input id="chatInput" type="text"
+                        placeholder="Ask about this repository…" maxlength="2000" autocomplete="off"
+                        aria-label="Ask RepoBloom"><button id="chatSend" class="btn" type="submit">Send ↑</button>
+                </form>
+            </section>
+        </main>
+        <footer class="footer"><span>RepoBloom · Evidence-first project handoff</span><span>AI summaries can be wrong;
+                verify important conclusions against the source.</span></footer>
+    </div>
+    <script>
+        (() => {
+            'use strict';
+            const $ = id => document.getElementById(id);
+            const state = { repo: '', analysis: null, history: [], busy: false };
+            function setStatus(msg, type = '') { $('status').textContent = msg; $('status').className = 'status' + (type ? ' ' + type : ''); }
+            function el(tag, cls = '', value = '') { const n = document.createElement(tag); if (cls) n.className = cls; if (value !== undefined && value !== null) n.textContent = String(value); return n; }
+            function empty(msg) { return el('div', 'empty', msg); }
+            function arr(v) { return Array.isArray(v) ? v : []; }
+            function pick(o, keys, fallback = null) { if (!o || typeof o !== 'object') return fallback; for (const k of keys) if (o[k] !== undefined && o[k] !== null && o[k] !== '') return o[k]; return fallback; }
+            function num(v) { const n = Number(v); return Number.isFinite(n) ? n : 0; }
+            function fmt(v) { return num(v).toLocaleString(); }
+            function repoName(raw) { let s = raw.trim().replace(/\/+$/, '').replace(/\.git$/i, ''); if (!s) throw Error('Please enter a GitHub repository URL.'); const m = s.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/([^/?#]+)(?:\/.*)?$/i); if (m) return m[1] + '/' + m[2]; if (/^[\w.-]+\/[\w.-]+$/.test(s)) return s; throw Error('Enter a valid URL like https://github.com/owner/repository'); }
+            async function api(url, options) { let r; try { r = await fetch(url, options || {}); } catch (e) { throw Error('Cannot reach Flask server. Make sure python app.py is running.'); } const raw = await r.text(); let d = {}; if (raw) { try { d = JSON.parse(raw); } catch (e) { throw Error('Server returned non-JSON output. Check the Flask terminal.'); } } if (!r.ok) throw Error(String(pick(d, ['error', 'detail', 'message'], `Request failed (${r.status})`))); if (d.ok === false) throw Error(String(pick(d, ['error', 'detail', 'message'], 'Request failed'))); return d; }
+            function contributors(d) { return arr(pick(d, ['contributors', 'authors', 'people'], [])); }
+            function commits(d) { return arr(pick(d, ['commits', 'commit_history', 'recent_commits'], [])); }
+            function msg(c) { return String(pick(c, ['message', 'title', 'commit_message', 'summary'], 'Untitled commit')); }
+            function author(c) { let a = pick(c, ['author', 'committer', 'author_name', 'name'], 'Unknown author'); return typeof a === 'object' ? String(pick(a, ['login', 'name', 'username'], 'Unknown author')) : String(a); }
+            function files(c) { return arr(pick(c, ['files', 'changed_files', 'touched_files'], [])); }
+            function fname(f) { return typeof f === 'string' ? f : String(pick(f, ['filename', 'name', 'path'], 'Unknown file')); }
+            function renderMetrics(d) { const cs = commits(d), ps = contributors(d), fs = new Set(); let add = 0, del = 0, known = false; cs.forEach(c => { files(c).forEach(f => { fs.add(fname(f)); if (f && typeof f === 'object' && (f.additions != null || f.deletions != null)) { known = true; add += num(f.additions); del += num(f.deletions); } }); if (c.additions != null || c.deletions != null) { known = true; add += num(c.additions); del += num(c.deletions); } }); $('metricContributors').textContent = fmt(pick(d, ['contributor_count'], ps.length)); $('metricCommits').textContent = fmt(pick(d, ['commit_count', 'commits_inspected'], cs.length)); $('metricFiles').textContent = fmt(pick(d, ['files_touched', 'total_files_touched'], fs.size)); const a = pick(d, ['additions', 'total_additions']), z = pick(d, ['deletions', 'total_deletions']); $('metricChanges').textContent = a !== null || z !== null ? fmt(num(a) + num(z)) : known ? fmt(add + del) : '—'; }
+            function renderOverview(d) { const box = $('overview'); box.replaceChildren(); let s = pick(d, ['overview', 'summary', 'project_summary', 'narrative', 'analysis_summary', 'ai_summary', 'readme_summary', 'description']); if (s && typeof s === 'object') { const p = ['project_purpose', 'purpose', 'what_it_does', 'summary', 'implementation', 'handoff', 'next_steps'].filter(k => s[k]).map(k => s[k]); s = p.length ? p.join('\n\n') : JSON.stringify(s, null, 2); } box.textContent = s ? String(s) : 'API returned data but no overview field. Check the backend response keys if an AI summary was expected.'; }
+            function renderPeople(d) {
+                const box = $('contributors'); box.replaceChildren(); const ps = contributors(d);
+                const roleRows = arr(pick(d, ['role_map', 'roleMap', 'responsibility_map'], []));
+                const roleFor = login => roleRows.find(r => String(pick(r, ['login', 'username', 'author', 'name'], '')).toLowerCase() === String(login).toLowerCase());
+                if (!ps.length) { box.append(empty('No contributors field was returned by the API.')); return; }
+                ps.forEach((p, i) => {
+                    p = typeof p === 'object' && p ? p : { name: String(p) };
+                    const name = String(pick(p, ['login', 'name', 'username', 'author'], `Contributor ${i + 1}`));
+                    const roleRow = roleFor(name) || {}; const roles = arr(pick(roleRow, ['roles', 'responsibilities', 'areas'], []));
+                    const card = el('div', 'person'), avatar = el('div', 'avatar', name[0]?.toUpperCase() || '?'), main = el('div', 'person-main');
+                    main.append(el('div', 'person-name', name)); const details = [];
+                    const count = pick(p, ['commit_count', 'commits_count', 'contributions', 'total_commits'], Array.isArray(p.commits) ? p.commits.length : pick(roleRow, ['commit_count'], null));
+                    if (count !== null) details.push(`${fmt(count)} commits`);
+                    if (p.additions != null || p.deletions != null) details.push(`+${fmt(p.additions)} / −${fmt(p.deletions)} lines`);
+                    const detailFiles = arr(p.files); if (detailFiles.length) details.push(`${detailFiles.length} files`);
+                    main.append(el('div', 'person-meta', details.join(' · ') || 'Activity shown from available Git history.'));
+                    card.append(avatar, main); if (count !== null) card.append(el('div', 'person-stats', `${fmt(count)} commits`));
+                    const work = el('div', 'dev-work');
+                    if (roles.length) {
+                        const badges = el('div', 'role-badges'); roles.forEach(r => { const obj = typeof r === 'string' ? { role: r } : r || {}; const title = pick(obj, ['role', 'title', 'name', 'area'], 'Role not specified'); const confidence = pick(obj, ['confidence']); badges.append(el('span', 'role-badge', confidence ? `${title} · ${confidence}` : title)); }); work.append(badges);
+                        roles.forEach(r => { const obj = typeof r === 'string' ? { role: r } : r || {}; const evidence = pick(obj, ['evidence', 'description', 'summary', 'reason']); if (evidence) work.append(el('div', 'evidence', `Evidence: ${typeof evidence === 'string' ? evidence : JSON.stringify(evidence)}`)); const rf = arr(pick(obj, ['files', 'paths'], [])); if (rf.length) { const chips = el('div', 'role-files'); rf.slice(0, 8).forEach(f => chips.append(el('span', 'chip', fname(f)))); work.append(chips); } });
+                    } else {
+                        const ownRole = pick(p, ['role', 'responsibility', 'area']); if (ownRole) { const badges = el('div', 'role-badges'); badges.append(el('span', 'role-badge', ownRole)); work.append(badges); }
+                        work.append(el('div', 'evidence', 'Specific role not returned by the backend role map. Work below is based on commit-level evidence where available.'));
+                    }
+                    const detailsCommits = arr(pick(p, ['commit_details', 'recent_commits', 'commit_history'], []));
+                    const roleCommits = roles.flatMap(r => arr(pick(typeof r === 'object' ? r : {}, ['commits', 'commit_details'], [])));
+                    const allCommits = [...detailsCommits, ...roleCommits]; const seen = new Set(); const unique = allCommits.filter(c => { const key = String(pick(c, ['sha', 'full_sha', 'url', 'message'], JSON.stringify(c))); if (seen.has(key)) return false; seen.add(key); return true; });
+                    if (unique.length) { work.append(el('div', 'evidence', 'Recent work / commit evidence:')); const list = el('div', 'work-commits'); unique.slice(0, 4).forEach(c => { const message = String(pick(c, ['message', 'title', 'summary'], 'Commit message unavailable')); const fs = arr(pick(c, ['files', 'changed_files'], [])).map(fname); const line = el('div', 'work-commit'); line.textContent = message + (fs.length ? ' — Files: ' + fs.slice(0, 5).join(', ') : ''); const url = pick(c, ['url', 'html_url']); if (url && /^https:\/\//i.test(String(url))) { const a = el('a', '', ' Open commit'); a.href = String(url); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.color = '#4263eb'; a.style.fontWeight = '700'; line.append(a); } list.append(line); }); work.append(list); }
+                    if (work.childNodes.length) card.append(work); box.append(card);
+                });
+            }
+            function renderCommits(d) { const box = $('commits'); box.replaceChildren(); const cs = commits(d); $('commitSubtitle').textContent = `${cs.length} commits returned by the API`; if (!cs.length) { box.append(empty('No commits returned. Check the backend commit-history field name.')); return; } cs.forEach((c, i) => { c = typeof c === 'object' && c ? c : { message: String(c) }; const card = el('article', 'commit'), top = el('div', 'commit-top'); top.append(el('div', 'commit-title', msg(c))); const sha = pick(c, ['sha', 'short_sha', 'hash', 'id']); if (sha) top.append(el('span', 'sha', String(sha).slice(0, 8))); card.append(top); const meta = [author(c)]; const date = pick(c, ['date', 'committed_at', 'timestamp', 'created_at']); if (date) meta.push(date); if (c.additions != null || c.deletions != null) meta.push(`+${fmt(c.additions)} / −${fmt(c.deletions)}`); if (files(c).length) meta.push(`${files(c).length} files`); card.append(el('div', 'commit-meta', meta.join(' · '))); const summary = pick(c, ['ai_summary', 'explanation', 'summary', 'analysis', 'description']); if (summary) card.append(el('div', 'commit-summary', typeof summary === 'string' ? summary : JSON.stringify(summary))); if (files(c).length) { const chips = el('div', 'filechips'); files(c).slice(0, 8).forEach(f => chips.append(el('span', 'chip', fname(f)))); if (files(c).length > 8) chips.append(el('span', 'chip', `+${files(c).length - 8} more`)); card.append(chips); } const actions = el('div', 'commit-actions'), b = el('button', 'linkbtn', 'Explain this commit ↗'); b.type = 'button'; b.addEventListener('click', () => explain(c, i, b)); actions.append(b); card.append(actions); box.append(card); }); }
+            function asItems(value) { if (typeof value === 'string') return value.split(/\n+/).map(s => s.replace(/^[-*•\d.)\s]+/, '').trim()).filter(Boolean); if (Array.isArray(value)) return value; if (value && typeof value === 'object') return Object.entries(value).map(([title, description]) => typeof description === 'object' ? { title, ...description } : { title, description }); return []; }
+            function renderIssues(d) { const box = $('issues'); box.replaceChildren(); const items = asItems(pick(d, ['issues', 'next_steps', 'recommendations', 'handoff_items', 'risks'], [])); if (!items.length) { box.append(empty('No explicit issues or next steps were returned. This does not mean there are no issues.')); return; } items.forEach((x, i) => { x = typeof x === 'object' && x ? x : { title: `Next step ${i + 1}`, description: String(x) }; const card = el('div', 'issue'); card.append(el('strong', '', pick(x, ['title', 'name', 'issue', 'task', 'label'], `Next step ${i + 1}`))); const desc = pick(x, ['description', 'details', 'reason', 'summary', 'recommendation', 'body']); if (desc) card.append(el('span', '', typeof desc === 'string' ? desc : JSON.stringify(desc))); box.append(card); }); }
+            function renderRoles(d) {
+                const box = $('roleMap'); box.replaceChildren();
+                let rows = pick(d, ['role_map', 'roleMap', 'responsibility_map', 'roles', 'team_roles'], []);
+                if (typeof rows === 'string') { box.append(el('div', 'overview-text', rows)); return; }
+                rows = arr(rows);
+                if (!rows.length) { box.append(empty('No developer work analysis was returned. Check the backend response and inspected GitHub commits.')); return; }
+                const repoInfo = pick(d, ['repo'], {}) || {};
+                const repoUrl = String(pick(repoInfo, ['html_url'], '')).replace(/\/$/, '');
+                const branch = String(pick(repoInfo, ['default_branch'], 'main'));
+                function addSection(card, title) { const sec = el('div', 'dev-section'); sec.append(el('div', 'dev-section-title', title)); card.append(sec); return sec; }
+                function addLink(parent, label, url) { if (!url) return; try { const a = document.createElement('a'); a.className = 'dev-link'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = label; parent.append(a); } catch (e) { } }
+                function showList(section, items, renderItem, emptyText) {
+                    if (!items.length) { section.append(el('div', 'dev-meta', emptyText)); return; }
+                    items.forEach(item => section.append(renderItem(item)));
+                }
+                rows.forEach((r, i) => {
+                    r = typeof r === 'object' && r ? r : { login: `Developer ${i + 1}`, roles: [] };
+                    const login = String(pick(r, ['login', 'username', 'author', 'name'], `Developer ${i + 1}`));
+                    const work = pick(r, ['work_analysis'], {}) || {};
+                    const card = el('article', 'role');
+                    const head = el('div', 'role-head');
+                    const identity = el('div', '');
+                    const name = el('div', '', String(pick(r, ['name'], login))); identity.append(name);
+                    const loginText = pick(r, ['login']); if (loginText && loginText !== pick(r, ['name'])) identity.append(el('div', 'dev-meta', '@' + loginText));
+                    head.append(identity);
+                    const count = pick(r, ['commit_count', 'commits_count', 'inspected_commits']);
+                    if (count !== null) head.append(el('span', 'person-stats', `${fmt(count)} inspected commits`));
+                    card.append(head);
+                    const summary = pick(work, ['work_summary']);
+                    if (summary) card.append(el('div', 'dev-summary', String(summary)));
+                    else card.append(el('div', 'dev-summary', 'No AI work explanation is available. Use the commit and file evidence below; this is not proof that the developer did no work.'));
+                    const status = String(pick(work, ['analysis_status'], 'insufficient_evidence')).replaceAll('_', ' ');
+                    card.append(el('div', 'dev-meta', `Analysis status: ${status}. Roles and issue findings are inferred from the inspected evidence.`));
+
+                    const responsibilities = arr(pick(work, ['responsibilities'], []));
+                    const roleItems = responsibilities.length ? responsibilities : arr(pick(r, ['roles', 'responsibilities', 'areas'], []));
+                    const roleSection = addSection(card, 'What this developer worked on');
+                    showList(roleSection, roleItems, item => {
+                        item = typeof item === 'object' && item ? item : { area: String(item) };
+                        const row = el('div', 'dev-row');
+                        row.append(el('strong', '', String(pick(item, ['area', 'role', 'title', 'name'], 'Work area'))));
+                        const desc = pick(item, ['description', 'summary', 'evidence']); if (desc) row.append(el('div', '', String(desc)));
+                        const confidence = pick(item, ['confidence']); if (confidence) row.append(el('div', 'dev-meta', `Evidence confidence: ${confidence}`));
+                        const fs = arr(pick(item, ['files', 'paths'], []));
+                        if (fs.length) { const chips = el('div', 'filechips'); fs.slice(0, 12).forEach(file => { const path = typeof file === 'string' ? file : fname(file); const chip = el('span', 'chip', path); chips.append(chip); }); row.append(chips); }
+                        const shas = arr(pick(item, ['commits', 'commit_shas'], []));
+                        shas.slice(0, 3).forEach(sha => { const line = el('div', 'dev-meta'); addLink(line, `Commit ${String(sha).slice(0, 7)}`, repoUrl ? `${repoUrl}/commit/${encodeURIComponent(sha)}` : ''); row.append(line); });
+                        return row;
+                    }, 'No specific responsibility could be confidently inferred from the inspected patches.');
+
+                    const files = arr(pick(work, ['files_analysis'], []));
+                    const fileSection = addSection(card, 'Files changed and why');
+                    showList(fileSection, files, item => {
+                        item = typeof item === 'object' && item ? item : { path: String(item) };
+                        const path = String(pick(item, ['path', 'filename', 'file'], 'Unknown file'));
+                        const row = el('div', 'dev-row');
+                        const title = el('strong', '');
+                        addLink(title, path, repoUrl ? `${repoUrl}/blob/${encodeURIComponent(branch)}/${path.split('/').map(encodeURIComponent).join('/')}` : '');
+                        if (!title.childNodes.length) title.textContent = path;
+                        row.append(title);
+                        const changed = pick(item, ['what_changed', 'changes', 'description']); if (changed) row.append(el('div', '', String(changed)));
+                        const purpose = pick(item, ['purpose']); if (purpose) row.append(el('div', 'dev-meta', `Purpose: ${purpose}`));
+                        const evidence = pick(item, ['evidence']); if (evidence) row.append(el('div', 'dev-meta', `Evidence: ${evidence}`));
+                        const sha = pick(item, ['commit_sha', 'sha']); if (sha) { const meta = el('div', 'dev-meta'); addLink(meta, `Commit ${String(sha).slice(0, 7)}`, repoUrl ? `${repoUrl}/commit/${encodeURIComponent(sha)}` : ''); row.append(meta); }
+                        return row;
+                    }, 'No patch-level file explanation was available. The contributor file list may still be present in the commit history.');
+
+                    const working = arr(pick(work, ['working_evidence'], []));
+                    const workSection = addSection(card, 'What appears to work');
+                    showList(workSection, working, item => {
+                        item = typeof item === 'object' && item ? item : { claim: String(item) };
+                        const row = el('div', 'dev-row'); row.append(el('strong', '', String(pick(item, ['claim'], 'Observed implementation'))));
+                        const evidence = pick(item, ['evidence']); if (evidence) row.append(el('div', '', String(evidence)));
+                        const verification = pick(item, ['verification']); if (verification) row.append(el('div', 'dev-meta', `Verification: ${String(verification).replaceAll('_', ' ')}`));
+                        return row;
+                    }, 'No test/runtime result was provided. A code change alone does not prove that the feature works.');
+
+                    const issues = arr(pick(work, ['potential_issues'], []));
+                    const issueSection = addSection(card, 'Potential errors and risks');
+                    showList(issueSection, issues, item => {
+                        item = typeof item === 'object' && item ? item : { title: String(item) };
+                        const row = el('div', 'dev-row');
+                        const severity = String(pick(item, ['severity'], 'medium')).toLowerCase();
+                        row.append(el('span', `issue-flag ${severity}`, severity));
+                        row.append(el('strong', '', String(pick(item, ['title'], 'Potential issue'))));
+                        const file = pick(item, ['file', 'path']); if (file) row.append(el('div', 'dev-meta', `File: ${file}${pick(item, ['line']) ? ` · Line ${pick(item, ['line'])}` : ''}`));
+                        const desc = pick(item, ['description', 'details']); if (desc) row.append(el('div', '', String(desc)));
+                        const evidence = pick(item, ['evidence']); if (evidence) row.append(el('div', 'dev-meta', `Code evidence: ${evidence}`));
+                        const verification = pick(item, ['verification']); if (verification) row.append(el('div', 'dev-meta', `Status: ${verification}. Treat as unconfirmed until verified.`));
+                        return row;
+                    }, 'No potential issue was identified in the inspected patches. This does not guarantee that the code is bug-free.');
+
+                    const pending = arr(pick(work, ['pending_work'], []));
+                    const pendingSection = addSection(card, 'Needs review / testing');
+                    showList(pendingSection, pending, item => el('div', 'dev-row', typeof item === 'string' ? item : String(pick(item, ['task', 'description', 'title'], JSON.stringify(item)))), 'No additional review steps were returned.');
+
+                    const limits = arr(pick(work, ['evidence_limitations'], []));
+                    if (limits.length) { const limitSection = addSection(card, 'Evidence limitations'); limits.slice(0, 5).forEach(item => limitSection.append(el('div', 'dev-meta', typeof item === 'string' ? item : JSON.stringify(item)))); }
+                    box.append(card);
+                });
+            }
+            function renderMap(d) { const box = $('connectionMap'); box.replaceChildren(); let items = pick(d, ['connection_map', 'connectionMap', 'architecture_map', 'connections', 'components'], []); if (typeof items === 'string') { box.append(el('div', 'overview-text', items)); return; } items = asItems(items); if (!items.length) { box.append(empty('No connection map was returned by the API.')); return; } items.forEach((x, i) => { x = typeof x === 'object' && x ? x : { title: `Connection ${i + 1}`, description: String(x) }; const row = el('div', 'map-item'), content = el('div', 'map-content'); row.append(el('div', 'map-dot')); content.append(el('div', 'map-title', pick(x, ['title', 'name', 'component', 'from'], `Component ${i + 1}`))); const desc = pick(x, ['description', 'details', 'relationship', 'summary', 'to']); if (desc) content.append(el('div', 'map-desc', typeof desc === 'string' ? desc : JSON.stringify(desc))); row.append(content); box.append(row); }); }
+            function addMessage(who, content, error = false) { const node = el('div', `message ${who === 'user' ? 'user' : 'bot'}${error ? ' error' : ''}`, content); $('chatMessages').append(node); $('chatMessages').scrollTop = $('chatMessages').scrollHeight; }
+            function renderAll(d, repo) { state.analysis = d; state.repo = repo; $('repoLabel').textContent = repo.toUpperCase(); renderMetrics(d); renderOverview(d); renderPeople(d); renderCommits(d); renderIssues(d); renderRoles(d); renderMap(d); $('chatMessages').replaceChildren(); addMessage('bot', `Repository loaded: ${repo}\nAsk about contributor responsibilities, commit changes, architecture, or handoff steps.`); }
+            async function analyze() { if (state.busy) return; let repo; try { repo = repoName($('repoInput').value); } catch (e) { setStatus(e.message, 'error'); return; } state.busy = true; $('analyzeBtn').disabled = true; $('analyzeBtn').textContent = 'Analyzing…'; setStatus(`Analyzing ${repo}…`, 'loading'); try { const d = await api('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repo, limit: 12 }) }); renderAll(d, repo); setStatus(`Analysis loaded for ${repo}. Verify important details against source code and commits.`, 'success'); } catch (e) { setStatus(e.message || 'Analysis failed. Check Flask terminal.', 'error'); $('overview').textContent = 'Analysis failed. Check the status message and Flask terminal. Keep GitHub and LLM credentials in your server .env file.'; } finally { state.busy = false; $('analyzeBtn').disabled = false; $('analyzeBtn').textContent = 'Analyze repo ↗'; } }
+            async function explain(c, i, b) { const original = b.textContent; b.disabled = true; b.textContent = 'Explaining…'; try { const d = await api('/api/commit-explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repo: state.repo, commit: c, sha: pick(c, ['sha', 'short_sha', 'hash']), index: i }) }); const answer = pick(d, ['explanation', 'summary', 'analysis', 'message', 'result']); if (!answer) throw Error('No explanation field returned by this endpoint.'); addMessage('bot', 'Commit explanation:\n' + (typeof answer === 'string' ? answer : JSON.stringify(answer, null, 2))); } catch (e) { addMessage('bot', `Separate commit explanation failed: ${e.message}. You can ask about this commit in chat if the backend supports it.`, true); } finally { b.disabled = false; b.textContent = original; } }
+            async function chat(e) { e.preventDefault(); const input = $('chatInput'), q = input.value.trim(); if (!q) return; if (!state.analysis || !state.repo) { addMessage('bot', 'Analyze a repository first so I have project context.'); return; } input.value = ''; addMessage('user', q); state.history.push({ role: 'user', content: q }); $('chatSend').disabled = true; $('chatState').textContent = '● Thinking…'; try { const d = await api('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repo: state.repo, question: q, message: q, history: state.history.slice(-10), context: state.analysis }) }); const a = pick(d, ['answer', 'response', 'reply', 'message', 'result', 'content']); if (!a) throw Error('No answer field returned by chat endpoint.'); const answer = typeof a === 'string' ? a : JSON.stringify(a, null, 2); addMessage('bot', answer); state.history.push({ role: 'assistant', content: answer }); $('chatState').textContent = '● Ready'; } catch (err) { addMessage('bot', `Chat request failed: ${err.message}\nCheck that Flask has a POST /api/chat endpoint and accepts the request fields.`, true); $('chatState').textContent = '● Needs attention'; } finally { $('chatSend').disabled = false; input.focus(); } }
+            function clearView() { state.analysis = null; state.repo = ''; state.history = []; $('repoLabel').textContent = 'NO REPOSITORY LOADED';['metricContributors', 'metricCommits', 'metricFiles', 'metricChanges'].forEach(id => $(id).textContent = '—'); $('overview').replaceChildren(empty('Your repository overview will appear here after analysis.')); $('contributors').replaceChildren(empty('Contributor details will appear here.')); $('commits').replaceChildren(empty('Analyze a repository to inspect its commits.')); $('issues').replaceChildren(empty('Potential next steps will appear here after analysis.')); $('roleMap').replaceChildren(empty('Role mapping will appear here if returned by the API.')); $('connectionMap').replaceChildren(empty('Connections will appear here if available.')); $('commitSubtitle').textContent = 'Commit summaries appear here when available.'; $('chatMessages').replaceChildren(el('div', 'message bot', 'Analyze a repository first, then ask me about its work and history.')); setStatus('View cleared. Enter a repository to begin.'); }
+            $('analyzeBtn').addEventListener('click', analyze); $('repoInput').addEventListener('keydown', e => { if (e.key === 'Enter') analyze(); }); $('chatForm').addEventListener('submit', chat); $('clearBtn').addEventListener('click', clearView);
+            try { const preset = new URLSearchParams(location.search).get('repo'); if (preset) $('repoInput').value = preset; } catch (e) { }
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,162 @@
+{
+  "name": "RepoBloom - Project Handoff Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "repobloom-analysis",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1d1b6e3a-6a3f-4d0e-9e2b-1d7f1a100001",
+      "name": "RepoBloom Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "repobloom-analysis"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body ?? $json;\nconst repoUrl = body.repo_url || body.repository_url || '';\nif (!repoUrl) {\n  throw new Error('Missing repo_url. Send the GitHub repository URL in the request body.');\n}\nconst githubData = body.github_data ?? {};\nconst discordData = body.discord_data ?? {};\nconst extraContext = body.extra_context ?? '';\nconst prompt = `You are RepoBloom, an evidence-first project handoff assistant. Analyze only the supplied evidence. Do not invent contributor roles, implementation status, tests, metrics, or decisions. Distinguish facts from inferences and unknowns. For contributors, explain specific files/commits and the evidence behind each inferred work area; do not claim a formal job title unless explicitly supported. Explain important commits in plain language, what appears completed, what was attempted, what remains unclear, and suggested next steps. Cite commit SHAs, file paths, timestamps, or Discord messages where available.\\n\\nRepository: ${repoUrl}\\n\\nGitHub evidence:\\n${JSON.stringify(githubData).slice(0, 50000)}\\n\\nDiscord evidence:\\n${JSON.stringify(discordData).slice(0, 30000)}\\n\\nAdditional context:\\n${String(extraContext).slice(0, 10000)}\\n\\nReturn a concise, structured JSON object with keys: project_overview, contributors (array), important_commits (array), decisions_and_attempts (array), completed_work (array), pending_or_unclear (array), recommended_handoff (array), evidence_gaps (array). Each nontrivial claim should include evidence and confidence where possible.`;\nreturn [{ json: { repo_url: repoUrl, prompt, model: body.model || 'qwen/qwen3.7-plus' } }];"
+      },
+      "id": "1d1b6e3a-6a3f-4d0e-9e2b-1d7f1a100002",
+      "name": "Prepare Evidence Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer REPLACE_WITH_OPENROUTER_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "HTTP-Referer",
+              "value": "http://localhost:5000"
+            },
+            {
+              "name": "X-Title",
+              "value": "RepoBloom"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: $json.model, messages: [{ role: 'system', content: 'You are a careful software project handoff analyst. Return valid JSON only.' }, { role: 'user', content: $json.prompt }], temperature: 0.2, max_tokens: 5000 }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "1d1b6e3a-6a3f-4d0e-9e2b-1d7f1a100003",
+      "name": "Analyze with OpenRouter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $json;\nconst content = response.choices?.[0]?.message?.content;\nif (!content) {\n  return [{ json: { ok: false, error: 'LLM response did not contain message content.', provider_response: response } }];\n}\nlet analysis;\ntry {\n  const cleaned = content.replace(/^```(?:json)?\\s*/i, '').replace(/\\s*```$/, '').trim();\n  analysis = JSON.parse(cleaned);\n} catch (e) {\n  analysis = { raw_analysis: content, parse_warning: 'Model response was not valid JSON; inspect raw_analysis.' };\n}\nreturn [{ json: { ok: true, source: 'n8n', analysis } }];"
+      },
+      "id": "1d1b6e3a-6a3f-4d0e-9e2b-1d7f1a100004",
+      "name": "Format Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "1d1b6e3a-6a3f-4d0e-9e2b-1d7f1a100005",
+      "name": "Return to RepoBloom",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1020,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "RepoBloom Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Evidence Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Evidence Prompt": {
+      "main": [
+        [
+          {
+            "node": "Analyze with OpenRouter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze with OpenRouter": {
+      "main": [
+        [
+          {
+            "node": "Format Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Analysis": {
+      "main": [
+        [
+          {
+            "node": "Return to RepoBloom",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1d1b6e3a-6a3f-4d0e-9e2b-1d7f1a100099",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

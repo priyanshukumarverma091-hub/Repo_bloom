@@ -1,0 +1,15 @@
+{
+  "repo_url": "https://github.com/OWNER/REPOSITORY",
+  "github_data": {
+    "contributors": [],
+    "commits": [],
+    "files_changed": [],
+    "note": "Replace this example with evidence collected by RepoBloom's existing GitHub integration."
+  },
+  "discord_data": {
+    "messages": [],
+    "note": "Pass messages/decisions collected from the already-configured Discord integration."
+  },
+  "extra_context": "Focus on who worked on what, commit-by-commit explanations, what was attempted, and what remains uncertain.",
+  "model": "qwen/qwen3.7-plus"
+}
