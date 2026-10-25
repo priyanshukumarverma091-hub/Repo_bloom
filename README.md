@@ -1,579 +1,399 @@
-# RepoBloom — GitHub Repository Intelligence
+RepoBloom — Lost Context Recovery Engine
 
-RepoBloom is a repository analysis application designed to help developers understand GitHub projects, inspect contribution history, investigate code changes, and recover technical context from existing repositories.
+RepoBloom is a repository intelligence prototype designed to help a new or returning contributor understand a project faster. It brings together repository context and AI-assisted reasoning to help recover the information a teammate may need after joining a codebase or when project knowledge has been lost.
 
-The application combines GitHub repository metadata, contributor records, commit history, changed-file patches, and issue information. When configured with OpenRouter, it can also generate AI-assisted explanations of available code changes.
+Project status: Prototype. Capabilities depend on the endpoints, integrations, and environment variables implemented in the current application. This README documents setup and optional Cloudinary configuration without claiming an upload route exists unless it has been added to the code.
 
-RepoBloom aims to make repository exploration more informative than basic contribution statistics by connecting development activity with the code evidence available through GitHub.
+Table of Contents
 
-## Table of Contents
+Overview
 
-* Overview
-* Problem Statement
-* Objectives
-* Features
-* System Workflow
-* Technology Stack
-* Project Structure
-* Prerequisites
-* Installation
-* Configuration
-* Running the Application
-* Using RepoBloom
-* API Configuration
-* Security Considerations
-* Limitations
-* Troubleshooting
-* Future Improvements
-* Contributing
-* License
+Problem
 
-## Overview
+How RepoBloom Works
 
-Understanding an unfamiliar software repository can require substantial time and effort. Developers often need to inspect commit histories, compare file changes, identify contributors, and investigate issues before they can confidently continue development.
+Features
 
-Traditional contribution dashboards primarily report metrics such as commit counts and additions or deletions. Although useful, these metrics do not fully explain the engineering work represented by a contribution.
+Technology Stack
 
-RepoBloom addresses this challenge by collecting available repository information and presenting it in a form that supports code investigation and project understanding.
+Project Structure
 
-With optional AI-assisted analysis, the application can explain the apparent purpose of selected commits using the associated code-change evidence.
+Prerequisites
 
-## Problem Statement
+Installation
 
-Software projects accumulate development context across commits, source files, issue discussions, and contributor activity. When this context is fragmented, developers may struggle to understand how a feature was implemented, what changed in a particular commit, or where further investigation is required.
+Environment Configuration
 
-RepoBloom provides a centralized interface for exploring available repository evidence and understanding the development history of a project.
+Running Locally
 
-The application is intended to support repository exploration, code review, onboarding, and project handoffs.
+Cloudinary Integration
 
-## Objectives
+API and Integrations
 
-The primary objectives of RepoBloom are to:
+Security
 
-* Retrieve relevant information from GitHub repositories.
-* Present contributor records and recent commit activity.
-* Inspect changed files and available code patches.
-* Explain code changes using optional AI-assisted analysis.
-* Provide issue information as additional investigation context.
-* Help developers understand an unfamiliar codebase more efficiently.
-* Support evidence-based investigation of developer activity.
+Troubleshooting
 
-## Features
+Roadmap
 
-### 1. Repository Analysis
+Contributing
 
-Users can provide a GitHub repository URL to initiate analysis.
+License
 
-The application retrieves supported repository information through the GitHub API, subject to repository visibility, permissions, rate limits, and API availability.
+Overview
 
-### 2. Contributor Analysis
+When a teammate leaves a project, joins late, or loses access to previous discussions, important knowledge can become scattered across source code, issues, documentation, pull requests, and team conversations. RepoBloom aims to reduce this onboarding gap by turning available project context into a concise, actionable explanation.
 
-RepoBloom retrieves available contributor records and contribution counts.
+The project is intended to support workflows such as:
 
-These records provide an overview of recorded repository activity. They do not necessarily represent every contribution made by an individual, nor do they establish the person's formal role or complete responsibilities.
+Understanding the purpose and structure of a repository.
 
-### 3. Commit History
+Recovering important context for a new contributor.
 
-The application inspects recent commits and displays available metadata, including:
+Summarizing available project information.
 
-* Commit SHA
-* Recorded author identity
-* Commit date
-* Commit message
-* Addition and deletion counts
-* Changed filenames
+Asking an AI model to reason over context supplied by the application.
 
-The documented starter configuration inspects up to 12 recent commits.
+Extending the context pipeline to connected documentation and collaboration tools.
 
-### 4. Changed-File and Patch Inspection
+Problem
 
-RepoBloom examines changed-file metadata and available commit patches.
+Project knowledge is often distributed across GitHub repositories, documentation, team chats, and individual contributors. When that context is missing, developers spend time reconstructing decisions, understanding architecture, and finding the next task.
 
-This enables users to investigate the actual modifications associated with a commit rather than relying exclusively on the commit message.
+RepoBloom explores a single workflow for collecting relevant context and presenting it in a way that helps a contributor get productive sooner.
 
-Patch availability depends on the GitHub API response. Some files may not have accessible patch content.
+How RepoBloom Works
 
-### 5. AI-Assisted Commit Explanations
+A typical intended workflow is:
 
-When an OpenRouter API key is configured, RepoBloom can use a compatible language model to generate explanations of selected commits.
+Collect context from supported repository or documentation sources.
 
-The analysis may help users understand the apparent purpose of a change and identify files that deserve closer inspection.
+Organize information into a form the application can process.
 
-AI-generated explanations are interpretations of the supplied evidence and should be verified against the original source changes.
+Send relevant context to the configured language-model provider when AI reasoning is requested.
 
-### 6. Issue Context
+Generate a response that helps the contributor understand the project or recover missing context.
 
-The application summarizes available GitHub issues as additional context for repository investigation.
+Present the result through the application's user interface or API.
 
-Issue information can help users identify reported problems and potential follow-up work. However, an issue's existence does not establish that a particular contributor implemented a related change.
+The exact data sources and workflow available in a running deployment depend on the current implementation and configured credentials.
 
-### 7. Developer Work Investigation
+Features
 
-RepoBloom aims to help users investigate what individual developers appear to have worked on.
+Repository context: Designed around understanding project files and repository information.
 
-By examining contributor records, commit metadata, changed filenames, and available patches, the application can provide context about recorded development activity.
+AI-assisted reasoning: Can use OpenRouter when the corresponding application endpoint and credentials are configured.
 
-The reliability of these conclusions depends on the available evidence. Commit authorship, file changes, and AI-generated interpretations must not be treated as definitive proof of a developer's responsibilities.
+Context recovery workflow: Focuses on helping new contributors regain project understanding rather than acting as a basic code-search tool.
 
-## System Workflow
+Extensible integrations: Can be extended to support documentation and team collaboration sources.
 
-The application follows this general workflow:
+Cloudinary-ready asset storage: Cloudinary can be configured for hosted images or other supported media if an upload and retrieval flow is implemented in the application.
 
-1. The user submits a GitHub repository URL.
-2. The Flask application validates the repository identifier.
-3. The application retrieves supported repository information through the GitHub API.
-4. Contributor records and recent commits are collected.
-5. Available changed-file metadata and patches are inspected.
-6. If configured, OpenRouter generates AI-assisted explanations using the supplied evidence.
-7. The application presents the available analysis through its web interface.
+Integration note: listing a provider in this README does not automatically add its functionality to the source code. Verify that the corresponding route and service code exist before describing an integration as fully operational.
 
-### Workflow Diagram
+Technology Stack
 
-```text
-GitHub Repository URL
-          |
-          v
-Repository URL Validation
-          |
-          v
-     Flask Backend
-          |
-          v
-      GitHub API
-          |
-          v
-Contributor and Commit Data
-          |
-          v
- Changed Files and Patches
-          |
-          v
- OpenRouter Analysis
-      (Optional)
-          |
-          v
- Repository Analysis Results
-```
+Technology
 
-This diagram represents the general application workflow. The exact analysis available depends on the implementation, configuration, and responses returned by external services.
+Purpose
 
-## Technology Stack
+Python
 
-| Technology      | Purpose                                                |
-| --------------- | ------------------------------------------------------ |
-| Python          | Application logic and data processing                  |
-| Flask           | Web framework and HTTP endpoints                       |
-| GitHub REST API | Repository, contributor, commit, and issue information |
-| Requests        | HTTP communication with external services              |
-| OpenRouter API  | Optional language-model integration                    |
-| HTML            | Web interface structure                                |
-| CSS             | Interface styling                                      |
-| JavaScript      | Client-side interactions, where implemented            |
-| python-dotenv   | Local environment-variable configuration               |
+Application logic
 
-## Project Structure
+Flask
 
-```text
-RepoBloom/
-├── app.py
-├── requirements.txt
-├── README.md
-├── .env.example
-├── .gitignore
-├── templates/
-│   └── index.html
-└── n8n/
-    ├── README.md
-    ├── workflow.json
-    └── examples/
-        └── request.json
-```
+Web application and API framework
 
-### File Descriptions
+GitHub API
 
-| File or Directory           | Description                                      |
-| --------------------------- | ------------------------------------------------ |
-| `app.py`                    | Flask application and repository-analysis logic  |
-| `requirements.txt`          | Python dependency list                           |
-| `README.md`                 | Project documentation                            |
-| `.env.example`              | Example environment-variable names               |
-| `.gitignore`                | Files and directories excluded from Git tracking |
-| `templates/index.html`      | HTML template for the web interface              |
-| `n8n/README.md`             | Documentation for the included n8n-related files |
-| `n8n/workflow.json`         | Exported workflow definition                     |
-| `n8n/examples/request.json` | Example request payload                          |
+Repository data access, when configured
 
-The inclusion of n8n workflow files does not, by itself, mean that a live n8n integration has been configured or deployed.
+OpenRouter
 
-## Prerequisites
+Access to supported language models, when configured
 
-Before installing RepoBloom, ensure that the following requirements are available:
+Cloudinary (optional)
 
-* Python 3.10 or a compatible version supported by the project's dependencies.
-* Git.
-* A GitHub account.
-* Internet connectivity for GitHub API requests.
-* An OpenRouter API key if AI-assisted explanations are required.
+Cloud-based image/media storage and delivery
 
-A GitHub token is recommended for authenticated API access. Access to private repositories requires appropriate token permissions.
+HTML, CSS, JavaScript
 
-## Installation
+User interface, where included in the project
 
-### 1. Clone the Repository
+python-dotenv
 
-```bash
+Loading local environment variables, if used by the app
+
+Project Structure
+
+The exact structure may vary by branch. A typical layout for this project is:
+
+Repo_bloom/
+├── app.py                 # Flask application and routes
+├── requirements.txt       # Python dependencies
+├── .env                   # Local secrets; do not commit
+├── .env.example           # Safe configuration template (recommended)
+├── templates/             # HTML templates, if used
+├── static/                # CSS, JavaScript, and local static assets
+└── README.md              # Project documentation
+
+Keep this tree aligned with the actual repository. Remove entries that are not present and add any real modules or directories used by your implementation.
+
+Prerequisites
+
+Python 3.10 or newer (use the version supported by the project).
+
+Git.
+
+A GitHub token if the application accesses private repositories or uses authenticated API requests.
+
+An OpenRouter API key if AI-powered endpoints are enabled.
+
+Cloudinary credentials only if the application uses Cloudinary functionality.
+
+Installation
+
+1. Clone the repository
+
 git clone https://github.com/priyanshukumarverma091-hub/Repo_bloom.git
 cd Repo_bloom
-```
 
-### 2. Create a Virtual Environment
+2. Create and activate a virtual environment
 
-On Windows:
+Windows PowerShell:
 
-```bash
-py -m venv .venv
-```
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 
-Activate the environment using Command Prompt:
+macOS/Linux:
 
-```cmd
-.venv\Scripts\activate
-```
-
-On macOS or Linux:
-
-```bash
 python3 -m venv .venv
 source .venv/bin/activate
-```
 
-### 3. Install Dependencies
+3. Install dependencies
 
-Upgrade pip and install the project's dependencies:
-
-```bash
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
+pip install -r requirements.txt
 
-### 4. Create the Local Environment File
+If Cloudinary is not already listed in requirements.txt and the application code imports it, install the SDK:
 
-On Windows Command Prompt:
+pip install cloudinary
 
-```cmd
-copy .env.example .env
-```
+If the application processes images locally, install Pillow only if it is required by the implemented code:
 
-On PowerShell:
+pip install Pillow
 
-```powershell
-Copy-Item .env.example .env
-```
+Add any newly required packages to requirements.txt so other developers can reproduce the environment.
 
-On macOS or Linux:
+Environment Configuration
 
-```bash
-cp .env.example .env
-```
+Create a .env file in the project root. Add only the variables required by your implementation. Example template:
 
-### 5. Configure Environment Variables
+# GitHub integration (use only the variable name expected by app.py)
+GITHUB_TOKEN=your_github_token
 
-Open the newly created `.env` file and configure the required credentials.
+# OpenRouter integration (use only if AI endpoints are enabled)
+OPENROUTER_API_KEY=your_openrouter_api_key
 
-See the Configuration section for details.
+# Cloudinary integration (optional; required only if used in app.py)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
-## Configuration
+Important: The exact variable names must match the names read by the application. If app.py uses different names, update this example to match the code. Never place real credentials in README files, screenshots, source control, or public issue reports.
 
-RepoBloom uses environment variables to configure API credentials and optional model settings.
+Get Cloudinary credentials
 
-The `.env.example` file should contain variable names and placeholder values only.
+Create or sign in to a Cloudinary account at Cloudinary Console.
 
-Example:
+Open the account dashboard.
 
-```env
-GITHUB_TOKEN=
-OPENROUTER_API_KEY=
-OPENROUTER_MODEL=
-```
+Copy the cloud name, API key, and API secret into your local .env file.
 
-Do not place real credentials in `.env.example` or any other file intended for public version control.
+Keep the API secret private. Do not expose it in browser-side JavaScript or commit it to Git.
 
-### GITHUB_TOKEN
+Running Locally
 
-A GitHub personal access token used for authenticated API requests.
+Start the Flask app using the entry point present in the repository. For a typical app.py application:
 
-A token may improve API access reliability and is required when the application needs to access private repositories for which the token has appropriate permissions.
-
-Use the minimum permissions required for the repositories being analyzed.
-
-### OPENROUTER_API_KEY
-
-An API key used to authenticate requests to OpenRouter.
-
-This variable is optional if the application supports running without AI-assisted explanations.
-
-When the key is absent, AI-dependent functionality may be unavailable.
-
-### OPENROUTER_MODEL
-
-The model identifier used for OpenRouter requests.
-
-The value must correspond to a model available to the configured OpenRouter account and supported by the application's request format.
-
-Consult the model configuration used by the current version of `app.py` before changing this setting.
-
-## Running the Application
-
-After completing installation and configuration, activate the virtual environment and run:
-
-```bash
 python app.py
-```
 
-Open the following address in your browser:
+If the project uses Flask's CLI instead, configure the appropriate application module and run:
 
-http://127.0.0.1:5000
+flask --app app run --debug
 
-The application runs locally unless a separate deployment configuration has been implemented.
+Use debug mode only for local development. Do not enable it in a public production deployment. The local URL and available routes depend on the host and port configured in the application.
 
-Keep the terminal open while using the application. Flask logs and runtime errors may appear there.
+Cloudinary Integration
 
-## Using RepoBloom
+Cloudinary is a cloud media service that can store, transform, optimize, and deliver images and other supported assets. In RepoBloom, it could be used to host project screenshots, onboarding visuals, or other media that should not be served from the application server's local disk.
 
-### Step 1: Open the Application
+Suggested use in RepoBloom
 
-Start the Flask server and navigate to the local application address.
+Store screenshots or visual assets used in project documentation.
 
-### Step 2: Enter a Repository URL
+Return a hosted asset URL to the frontend after a successful upload.
 
-Provide a GitHub repository URL in the format:
+Use Cloudinary transformations and delivery URLs where appropriate.
 
-```text
-https://github.com/owner/repository
-```
+Keep media management separate from repository-context and AI-reasoning logic.
 
-For example:
+Configuration
 
-```text
-https://github.com/priyanshukumarverma091-hub/Repo_bloom
-```
+Set these variables in .env if the Cloudinary SDK is used by the backend:
 
-The repository must be accessible to the configured GitHub API credentials.
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
-### Step 3: Inspect the Results
+Install the SDK if needed:
 
-Review the available contributor information, commit metadata, changed files, and issue context.
+pip install cloudinary
 
-### Step 4: Investigate Code Changes
+A backend integration generally needs to configure the SDK with these values, validate the incoming file, upload it through a server-side route, and return a safe response containing the resulting asset URL and identifier. The route name, accepted file types, upload limits, and response schema must be documented from the actual implementation.
 
-Use the relevant commit and file information to understand the recorded modifications.
+Current implementation check: Cloudinary configuration alone does not create an upload endpoint. Before claiming uploads are available, confirm that app.py imports/configures the SDK, exposes an upload route, validates uploaded files, and handles provider errors. If these parts have not been implemented, describe Cloudinary as planned or optional rather than as a working feature.
 
-Where available, inspect the original GitHub commit and source files to verify the analysis.
+Upload security checklist
 
-### Step 5: Use AI-Assisted Explanations
+Allow only required file types and enforce a maximum file size.
 
-If OpenRouter is configured, use the available AI explanation functionality to obtain additional context about supported commit changes.
+Validate uploads on the server; do not trust the filename or client-provided MIME type alone.
 
-AI explanations should be treated as assistance for code investigation, not as a substitute for reviewing the source code.
+Require authentication/authorization for uploads when the app is not intended for public uploads.
 
-## API Configuration
+Apply rate limits and sensible upload quotas.
 
-RepoBloom uses external APIs to retrieve repository information and, optionally, generate explanations.
+Keep CLOUDINARY_API_SECRET server-side and out of frontend bundles.
 
-### GitHub API
+Avoid logging API secrets or sensitive upload contents.
 
-The GitHub API supplies the repository information used by the application.
+Handle provider errors without returning internal stack traces to clients.
 
-The availability of data depends on repository visibility, permissions, API endpoints, rate limits, and the GitHub response.
+API and Integrations
 
-Official documentation:
+The routes and request/response schemas should be documented from the current app.py implementation. Do not rely on guessed endpoint names. A useful API reference should list:
 
-https://docs.github.com/en/rest
+Item
 
-### OpenRouter API
+What to document
 
-OpenRouter provides access to compatible language models for optional AI-assisted analysis.
+Health/status route
 
-Requests require a valid API key and an available model.
+Actual route, status code, and response
 
-Official documentation:
+Repository/context route
 
-https://openrouter.ai/docs
+Required parameters and returned data
 
-API pricing, model availability, usage limits, and access requirements are determined by the provider and may change.
+AI reasoning route
 
-## Security Considerations
+Input schema, provider/model configuration, and error responses
 
-Security is important when analyzing repositories and configuring external API integrations.
+Media upload route (if implemented)
 
-### Protect API Credentials
+Authentication, allowed file types, upload limits, and returned asset URL
 
-Never commit real API keys, personal access tokens, or other secrets to a public repository.
+GitHub
 
-Keep actual credentials in the local `.env` file or an appropriate secrets-management system.
+Use the GitHub API only with the permissions needed by the application. Prefer fine-grained tokens and minimal repository access. Handle rate limits and API errors gracefully.
 
-Ensure that `.env` is excluded by `.gitignore`.
+OpenRouter
 
-### Verify `.gitignore`
+Keep the OpenRouter API key on the server. Send only the context required for the task, and handle provider timeouts, rate limits, invalid responses, and model availability errors.
 
-At minimum, the project's ignore rules should include:
+Security
 
-```gitignore
-.env
-.env.*
-!.env.example
+Keep .env out of version control; add it to .gitignore.
 
-.venv/
-venv/
-__pycache__/
-*.py[cod]
-```
+Commit a .env.example containing placeholders only, never real keys.
 
-Additional rules may be required for local IDE settings, generated files, logs, and other sensitive artifacts.
+If a secret has ever been committed or exposed, revoke/rotate it immediately. Removing it from the latest file alone is not enough if it remains in Git history.
 
-### Use Placeholder Values
+Never send GitHub, OpenRouter, or Cloudinary secrets to the frontend.
 
-The public `.env.example` file should contain empty values or clearly identified placeholders.
+Validate all user input and uploaded files on the server.
 
-Never copy real credentials into example configuration files.
+Limit token permissions and external API access to what is required.
 
-### Rotate Exposed Credentials
+Avoid exposing debug traces, raw secrets, or private repository contents in API responses.
 
-If a credential has been committed or otherwise exposed, revoke it and generate a replacement.
+Add authentication, authorization, and rate limiting appropriate to the deployment.
 
-Removing a secret from the latest version of a file does not remove it from previous Git commits. Exposed credentials may require Git history cleanup in addition to revocation.
+Troubleshooting
 
-### Treat Repository Content as Untrusted
+Missing environment variable
 
-Repository files, commit messages, and issue descriptions may contain misleading text or instructions.
+Confirm .env exists in the expected working directory.
 
-AI-assisted analysis should treat repository content as data to inspect, not as trusted instructions.
+Confirm the application loads environment variables (for example, through python-dotenv if used).
 
-## Limitations
+Check that variable names match the code exactly.
 
-RepoBloom's analysis is constrained by the information available through GitHub and the capabilities of its configured services.
+Restart the server after changing environment variables.
 
-### Contributor Data
+GitHub API errors
 
-GitHub contributor records may be incomplete, delayed, or unavailable for some repositories. They should not be treated as a complete ownership ledger.
+Verify the token and repository permissions.
 
-### Commit Authorship
+Check the repository owner/name and API request parameters.
 
-A commit's recorded author identity is evidence of the metadata associated with that commit. It does not independently establish a developer's formal job title, responsibilities, or full contribution to the project.
+Handle rate limits and unauthorized responses.
 
-### Patch Availability
+OpenRouter errors
 
-GitHub may omit patch content for binary files, large changes, or other circumstances. The application may also truncate the evidence supplied for AI analysis.
+Verify the API key and configured model identifier.
 
-### AI Accuracy
+Check provider status, quota, and request payload format.
 
-Language models can misinterpret code, infer intent incorrectly, or produce explanations that are not supported by the available evidence.
+Handle timeout and non-success HTTP responses in the application.
 
-Verify important conclusions against the original commit, changed files, and relevant project documentation.
+Cloudinary upload errors
 
-### Issue Context
+Verify the cloud name, API key, and API secret.
 
-Issues provide useful investigation context, but they do not necessarily establish which developer implemented a fix or whether a reported problem has been resolved.
+Confirm the Cloudinary SDK is installed and the backend loads the configuration.
 
-### API Availability
+Check that the route exists and that the request uses the expected multipart field name.
 
-GitHub and OpenRouter requests depend on network connectivity, API availability, valid credentials, provider permissions, and usage limits.
+Confirm the file type and size are permitted by your server-side validation and Cloudinary settings.
 
-### Deployment
+Never print the API secret to debug a configuration issue.
 
-The current application is designed to run locally using Flask. Production deployment, serverless compatibility, persistent storage, authentication, and other operational requirements must be assessed separately before exposing the application publicly.
+Roadmap
 
-## Troubleshooting
+Potential future improvements include:
 
-### Error: Enter a Repository Hosted on github.com
+More complete repository and documentation context ingestion.
 
-Check that the supplied URL uses the supported GitHub repository format:
+Better context ranking and structured onboarding summaries.
 
-```text
-https://github.com/owner/repository
-```
+Additional documentation and collaboration integrations.
 
-Ensure that the hostname is `github.com` and that the URL identifies a repository rather than a profile or organization page.
+A secure, validated Cloudinary upload workflow for project media, if needed.
 
-### Error: GitHub Authentication Failed
+Automated tests for API routes, provider failures, and permission boundaries.
 
-Verify that `GITHUB_TOKEN` is correctly configured in `.env`.
+Deployment configuration, observability, and production hardening.
 
-Check that the token is valid and has the permissions required for the target repository.
+These are roadmap ideas, not claims that the features are already implemented.
 
-Restart the application after modifying environment variables.
+Contributing
 
-### Error: Repository or Resource Not Found
+Fork the repository or create a feature branch.
 
-Verify the repository owner's name, repository name, and URL.
+Keep changes focused and document any new configuration variables.
 
-For private repositories, confirm that the configured token has access to the repository.
+Never commit API keys, tokens, or other secrets.
 
-### Error: GitHub Rate Limit
+Test the relevant workflow locally.
 
-Authenticated and unauthenticated requests have different rate limits.
+Open a pull request with a clear description of the change and its testing status.
 
-Configure a valid GitHub token and check the API response for rate-limit information.
+License
 
-### Error: OpenRouter Authentication Failed
+Add the project's chosen license here. Until a license is included in the repository, do not assume that the code is licensed for unrestricted reuse.
 
-Check that `OPENROUTER_API_KEY` contains a valid key and that the application is loading the intended `.env` file.
-
-Restart Flask after changing the configuration.
-
-### Error: OpenRouter Model Unavailable
-
-Verify that `OPENROUTER_MODEL` identifies a model available to the configured account.
-
-Check the provider's documentation for current model identifiers and access requirements.
-
-### AI Explanations Are Unavailable
-
-Confirm that the OpenRouter key is configured and that the selected model is accessible.
-
-Check the Flask terminal output for the underlying API error.
-
-AI-dependent functionality may be unavailable if the provider rejects a request, times out, or returns an unexpected response.
-
-### Changes to `.env` Do Not Take Effect
-
-Restart the Flask process after editing environment variables.
-
-Also verify that the application loads the expected `.env` file and that the variable names match those referenced in the source code.
-
-## Future Improvements
-
-Potential areas for further development include:
-
-* More detailed developer-work summaries grounded in commit and file evidence.
-* Better visualization of contributor activity over time.
-* Improved identification of relationships between issues and commits.
-* Additional code-review and change-risk indicators.
-* Configurable commit-history depth.
-* More comprehensive test coverage and automated validation.
-* Caching and improved API rate-limit handling.
-* Authentication and access controls for hosted deployments.
-* Optional integrations with development collaboration platforms.
-* Improved support for large repositories and patch-heavy projects.
-
-These items represent potential improvements and should not be interpreted as features already implemented.
-
-## Contributing
-
-Contributions, bug reports, and improvement suggestions are welcome.
-
-When proposing a change:
-
-1. Describe the problem or improvement clearly.
-2. Explain the expected behavior.
-3. Include relevant reproduction steps for bugs.
-4. Avoid including credentials, personal access tokens, or other sensitive information in issues and pull requests.
-5. Test changes where practical before submitting them.
-
-For substantial changes, consider opening an issue to discuss the proposed approach before implementation.
-
-## License
-
-A license has not been specified in this documentation.
-
-Before distributing, modifying, or reusing this project, add an appropriate `LICENSE` file and update this section to reflect the selected license.
+Built as a prototype to explore faster project onboarding and lost-context recovery.
